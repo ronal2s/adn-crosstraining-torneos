@@ -6,19 +6,22 @@ import { StyledTitle } from "@components/styleds/styledTitle";
 import { StyledView } from "@components/styleds/styledView";
 import * as FirebaseRecaptcha from "expo-firebase-recaptcha";
 import { firebaseConfig } from "@utils/config";
+import * as Animatable from "react-native-animatable";
 
 import colors from "@utils/colors/colors";
 import constants from "@utils/constants";
 import helpers from "@utils/helpers";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "react-native-paper";
 import { Alert } from "react-native";
 import AuthController from "@controllers/authController";
 import { saveKeyValue } from "@services/secureStorage";
 import { SecureStorageKey } from "@utils/secureKeys";
 
-function OnboardingSignIn() {
+function OnboardingSignIn({ isVisible = true }: { isVisible: boolean }) {
   const refCaptchaVerifier = useRef(null);
+  // const animation = useRef<any>(null);
+
   const [modal, setModal] = useState(false);
 
   const [mobile, setMobile] = React.useState({
@@ -54,6 +57,10 @@ function OnboardingSignIn() {
     }
   };
 
+  if (!isVisible) {
+    return <StyledView />;
+  }
+
   return (
     <StyledView
       position="absolute"
@@ -62,54 +69,56 @@ function OnboardingSignIn() {
       height={"100%"}
       width={"100%"}
     >
-      <MyCard
-        color={CARD_COLOR}
-        shadowColor={CARD_SHADOW_COLOR}
-        width={helpers.screen.width / 1.2}
-      >
-        <StyledTitle
-          color={colors.white}
-          style={{ opacity: 0.8 }}
-          fontSize={42}
-          fontWeight="300"
-          textAlign="center"
+      <Animatable.View animation="bounceIn">
+        <MyCard
+          color={CARD_COLOR}
+          shadowColor={CARD_SHADOW_COLOR}
+          width={helpers.screen.width / 1.2}
         >
-          Iniciar
-        </StyledTitle>
+          <StyledTitle
+            color={colors.white}
+            style={{ opacity: 0.8 }}
+            fontSize={42}
+            fontWeight="300"
+            textAlign="center"
+          >
+            Iniciar
+          </StyledTitle>
 
-        <StyledSpacer height={constants.margin} />
-        <MobileInput defaultValue={mobile} onChange={onChangeMobile} />
-        <StyledSpacer />
-        <Button
-          mode="contained"
-          style={{
-            opacity: 0.7,
-            backgroundColor: colors.white,
-          }}
-          onPress={sendOTPCode}
-        >
-          Iniciar sesión
-        </Button>
-        <StyledSpacer />
-        <StyledTitle
-          color={colors.white}
-          fontSize={12}
-          fontWeight="200"
-          textAlign="center"
-        >
-          ADN Crosstraining
-        </StyledTitle>
-      </MyCard>
-      <ModalVerifyOTP
-        isVisible={modal}
-        onSwipe={() => setModal(false)}
-        resendOTP={sendOTPCode}
-      />
-      <FirebaseRecaptcha.FirebaseRecaptchaVerifierModal
-        ref={refCaptchaVerifier}
-        firebaseConfig={firebaseConfig}
-        // attemptInvisibleVerification={true}
-      />
+          <StyledSpacer height={constants.margin} />
+          <MobileInput defaultValue={mobile} onChange={onChangeMobile} />
+          <StyledSpacer />
+          <Button
+            mode="contained"
+            style={{
+              opacity: 0.7,
+              backgroundColor: colors.white,
+            }}
+            onPress={sendOTPCode}
+          >
+            Iniciar sesión
+          </Button>
+          <StyledSpacer />
+          <StyledTitle
+            color={colors.white}
+            fontSize={12}
+            fontWeight="200"
+            textAlign="center"
+          >
+            ADN Crosstraining
+          </StyledTitle>
+        </MyCard>
+        <ModalVerifyOTP
+          isVisible={modal}
+          onSwipe={() => setModal(false)}
+          resendOTP={sendOTPCode}
+        />
+        <FirebaseRecaptcha.FirebaseRecaptchaVerifierModal
+          ref={refCaptchaVerifier}
+          firebaseConfig={firebaseConfig}
+          // attemptInvisibleVerification={true}
+        />
+      </Animatable.View>
     </StyledView>
   );
 }

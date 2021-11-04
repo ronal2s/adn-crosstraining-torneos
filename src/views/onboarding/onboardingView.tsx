@@ -5,7 +5,7 @@ import colors from "@utils/colors/colors";
 import constants from "@utils/constants";
 import { Image } from "react-native";
 import OnboardingVideoContent from "@views/onboarding/onboardingVideo";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import Screens from "@utils/screens";
@@ -16,6 +16,7 @@ const logo = require("@assets/logo_white.png");
 
 function OnboardingView() {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const [signInVisible, setSignInVisible] = useState(false);
 
   const onGetStartedPressed = () => {
     // navigation.replace(ScreensCommons.LOCATION_PERMISSION);
@@ -23,6 +24,10 @@ function OnboardingView() {
 
   const openJoinAsTrainer = () => {
     // navigation.navigate(ScreensTrainer.JOIN_STEP_1);
+  };
+
+  const toggleSignInView = () => {
+    setSignInVisible(!signInVisible);
   };
 
   const onSkip = () => {
@@ -35,11 +40,11 @@ function OnboardingView() {
       style={{ backgroundColor: "black" }}
     >
       <OnboardingVideoContent />
-      <OnboardingSignIn />
+      <OnboardingSignIn isVisible={signInVisible} />
 
       <StyledView style={onboardingStyles.bottomButtons}>
-        <Button mode="contained" color="white">
-          Iniciar sesión
+        <Button mode="contained" color="white" onPress={toggleSignInView}>
+          {signInVisible ? "Ocultar" : "Iniciar sesión"}
         </Button>
         <Button mode="outlined" color="white" onPress={onSkip}>
           Saltar
